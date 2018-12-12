@@ -8,6 +8,7 @@ const initialState = {
 };
 
 const mapping = {
+    [at.RESET_DATA]: (state, action) => initialState,
     [at.LOADING_DATA]: (state, {src}) => ({
         status: "loading",
         src

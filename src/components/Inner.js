@@ -9,6 +9,11 @@ const styles = theme => ({
         width: "100%",
         position: "absolute",
         backgroundColor: theme.palette.background.paper
+    },
+    header: {
+        position: "absolute",
+        top: 0,
+        width: "100%"
     }
 });
 

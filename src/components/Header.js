@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
+import classNames from 'classnames';
 import {fade} from '@material-ui/core/styles/colorManipulator';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
@@ -10,7 +11,10 @@ import Typography from '@material-ui/core/Typography';
 import GithubCircle from 'mdi-material-ui/GithubCircle';
 import ArrowRight from 'mdi-material-ui/ArrowRight';
 import connect from "react-redux/es/connect/connect";
+import {withRouter} from "react-router-dom";
 import dataAT from "../reducers/data/at";
+import {isValidRepo} from "./validate";
+
 
 const styles = (theme) => ({
     root: {
@@ -82,6 +86,9 @@ const styles = (theme) => ({
             width: 300,
         },
     },
+    inputError: {
+        backgroundColor: "#ff3a3c"
+    }
 });
 
 class Header extends React.Component {
@@ -95,16 +102,25 @@ class Header extends React.Component {
 
     onSrcChange = (ev) => {
         this.setState({
-            src: ev.target.value
+            src: ev.target.value,
+            error: !ev.target.value ? "no repo" : (!isValidRepo(ev.target.value) ? "not a repo" : null)
         });
     };
 
     onSrcLoad = () => {
-        this.props.dispatch({
-            type: dataAT.LOAD_DATA,
-            src: this.state.src
-        })
+        if (!this.state.error) {
+            this.props.dispatch({
+                type: dataAT.LOAD_DATA,
+                src: this.state.src
+            });
+        }
     };
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.src !== this.props.src) {
+            this.props.history.replace('/' + (this.props.src || ""));
+        }
+    }
 
     render() {
         const {classes, src} = this.props;
@@ -121,13 +137,13 @@ class Header extends React.Component {
                                 Atlas of open source
                             </Typography>
                         </div>
-                        <div className={classes.repoSrc}>
+                        <div className={classNames(classes.repoSrc, this.state.error && classes.inputError)}>
                             <div className={classes.repoSrcIcon}>
                                 <GithubCircle/>
                             </div>
                             <InputBase
                                 defaultValue={src}
-                                placeholder="Enter ethlas data GH repo…"
+                                placeholder="E.g.: protolambda/ethlas-ethereum"
                                 fullWidth
                                 classes={{
                                     root: classes.inputRoot,
@@ -155,5 +171,6 @@ const ConnectedHeader = connect(state => ({
     src: state.data.src
 }))(Header);
 
+const StyledHeader = withStyles(styles)(ConnectedHeader);
 
-export default withStyles(styles)(ConnectedHeader);
+export default withRouter(StyledHeader)

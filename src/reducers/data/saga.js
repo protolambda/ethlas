@@ -21,6 +21,13 @@ const testData = {
 };
 
 function* loadDataMaybe({src}) {
+    if (!src) {
+        yield put({
+            type: at.RESET_DATA
+        });
+        return;
+    }
+
     const {currentStatus, currentSrc} = yield select(state => ({currentStatus: state.data.status, currentSrc: state.data.src}));
     if (currentSrc !== src || currentStatus === "fail") {
         yield put({

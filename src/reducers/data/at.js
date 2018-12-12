@@ -1,4 +1,6 @@
 const dataAT = {
+    // Clear state
+    RESET_DATA: "RESET_DATA",
     // Do the request
     LOAD_DATA: "LOAD_DATA",
     // Signal that the request has started
